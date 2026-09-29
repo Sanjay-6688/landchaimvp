@@ -1,2 +1,2 @@
-export const API=process.env.NEXT_PUBLIC_API_URL||"http://127.0.0.1:8000";
+export const API=(process.env.NEXT_PUBLIC_API_URL||"http://127.0.0.1:8000").replace(/\/$/,"");
 export async function request<T=any>(path:string, options:RequestInit={}):Promise<T>{const res=await fetch(`${API}/api${path}`,{...options,headers:{"Content-Type":"application/json",...options.headers},cache:"no-store"});const data=await res.json().catch(()=>({detail:"Unexpected API response"}));if(!res.ok)throw new Error(data.detail||`Request failed (${res.status})`);return data}

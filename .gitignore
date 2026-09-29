@@ -1,5 +1,7 @@
 .env
 .env.local
+.env.*
+!.env.example
 node_modules/
 venv/
 .venv/
@@ -17,5 +19,6 @@ backend/*.db
 backend/.local-*
 blockchain/.hardhat-*
 blockchain/deployments/*.json
+blockchain/.local-*
 blockchain/types/
 frontend/*.tsbuildinfo

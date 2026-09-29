@@ -166,6 +166,58 @@ cd backend
 .\scripts\reset-dev.ps1
 ```
 
+## Public test demo (Render + Neon + Sepolia)
+
+This is a public demonstration on Ethereum's Sepolia test network. It does not represent real property title or real money. The Render blueprint in `render.yaml` creates the Next.js and FastAPI web services; Neon supplies PostgreSQL. Render's free web services sleep after inactivity, so the first visit may take about a minute. Neon's free plan currently includes 0.5 GB per project and 100 compute-hours per month. Render's free Postgres databases expire after 30 days, so this setup uses Neon instead. Check each provider's current limits before deploying: [Render free instance limits](https://render.com/docs/free), [Neon free plan limits](https://neon.com/docs/introduction/plans).
+
+The API is public and has no user authentication. It limits write requests to 20 per minute per client, but that is only an abuse guard. Use a freshly generated Sepolia-only wallet, fund it with only a small amount of test ETH, and never put real funds or real property documents in this demo.
+
+### 1. Create a dedicated test wallet
+
+From PowerShell:
+
+```powershell
+cd C:\Users\Sanjay\Landchain-MVP\blockchain
+npm run wallet:sepolia-demo
+```
+
+The command prints the public address and saves the private key only to `blockchain/.local-sepolia-wallet.json`. That file is ignored by Git. Keep a secure backup; the command refuses to overwrite it. Use a Sepolia faucet to request test ETH for the public address.
+
+### 2. Get a Sepolia RPC URL
+
+Create an Ethereum Sepolia app with an RPC provider such as [Alchemy](https://www.alchemy.com/). Keep its endpoint private because the URL contains your API key. Do not paste it into GitHub or this chat.
+
+### 3. Deploy LandChain to Sepolia
+
+Set the RPC endpoint and the dedicated wallet key in the current PowerShell session, then deploy:
+
+```powershell
+$env:SEPOLIA_RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY"
+$env:BLOCKCHAIN_PRIVATE_KEY = "YOUR_DEMO_WALLET_PRIVATE_KEY"
+npm run deploy:sepolia
+Remove-Item Env:\SEPOLIA_RPC_URL
+Remove-Item Env:\BLOCKCHAIN_PRIVATE_KEY
+```
+
+Run this from `blockchain/`. The script prints the deployed contract address and writes the full deployment record under the ignored `blockchain/deployments/sepolia.json` file. Do not deploy with the standard Hardhat test account or a personal wallet.
+
+### 4. Create the cloud database
+
+Create a new PostgreSQL project on [Neon](https://neon.com/), then copy its connection string. Keep the database project separate from any existing `landchain` database. The Render service converts the standard `postgresql://` connection string to the psycopg v3 driver format at runtime.
+
+### 5. Provision the web services
+
+1. Create a Render account and connect the GitHub repository `Sanjay-6688/landchaimvp`.
+2. In Render, create a new Blueprint using the repository's `main` branch and `render.yaml`.
+3. In the Blueprint's secret prompts, provide:
+   - `DATABASE_URL`: the Neon connection string.
+   - `BLOCKCHAIN_RPC_URL`: the same Sepolia RPC endpoint used to deploy.
+   - `BLOCKCHAIN_PRIVATE_KEY`: the dedicated test wallet key from the local ignored wallet file.
+   - `LANDCHAIN_CONTRACT_ADDRESS`: the Sepolia contract address printed by the deploy command.
+4. Deploy the Blueprint. Render connects the frontend URL to the API URL automatically. Wait for both services to report healthy, then open the Render URL for `landchain-demo-web`.
+
+The blueprint uses free Render web services, which sleep after 15 minutes without traffic and can take about a minute to wake. Neon free projects have monthly usage limits; monitor usage in its dashboard. Public demo operations spend Sepolia test ETH and are not access-controlled, so keep the wallet balance low.
+
 ## API outline
 
 - `GET /api/health`
