@@ -23,7 +23,7 @@ For blockchain writes, the API waits for a successful transaction receipt before
 ## Folder structure
 
 - `blockchain/` — Solidity contracts, Hardhat configuration, deployment script, and contract tests.
-- `backend/` — FastAPI application, SQLAlchemy models, Web3 services, seed script, and API tests.
+- `backend/` — FastAPI application, SQLAlchemy models, Web3 services, seed script, API tests, and a Docker image definition for hosted deployment.
 - `frontend/` — responsive Next.js dashboard and API client.
 - `.env.example` — environment-variable template. The root `.env` and `backend/.env` are ignored by Git.
 
@@ -205,7 +205,7 @@ Create a new PostgreSQL project on [Neon](https://neon.com/), then copy its conn
 ### 5. Provision the web services
 
 1. Create a Render account and connect the GitHub repository `Sanjay-6688/landchaimvp`.
-2. In Render, create a new Blueprint using the repository's `main` branch and `render.yaml`.
+2. In Render, create a new Blueprint using the repository's `main` branch and `render.yaml`. The API uses a multi-stage Docker build to compile and include the `PropertyToken` contract artifact required for hosted tokenization; the frontend runs as a Node web service.
 3. In the Blueprint's secret prompts, provide:
    - `DATABASE_URL`: the Neon connection string.
    - `BLOCKCHAIN_RPC_URL`: the same Sepolia RPC endpoint used to deploy.
