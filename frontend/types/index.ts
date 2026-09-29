@@ -1,0 +1,2 @@
+export type User={id:number;full_name:string;email:string;wallet_address:string;role:string};
+export type Property={id:number;property_id:number;owner_user_id:number;title:string;location_address:string;area_sq_ft:number;property_value:number;land_reference_code:string;document_hash:string;blockchain_registered:boolean;blockchain_verified:boolean;tokenized:boolean;token_contract_address:string|null;created_at:string};
