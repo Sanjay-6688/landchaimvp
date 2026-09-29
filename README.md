@@ -189,17 +189,14 @@ Create an Ethereum Sepolia app with an RPC provider such as [Alchemy](https://ww
 
 ### 3. Deploy LandChain to Sepolia
 
-Set the RPC endpoint and the dedicated wallet key in the current PowerShell session, then deploy:
+Add your Alchemy Sepolia endpoint to the local `backend/.env` as `SEPOLIA_RPC_URL=...`, then run:
 
 ```powershell
-$env:SEPOLIA_RPC_URL = "https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY"
-$env:BLOCKCHAIN_PRIVATE_KEY = "YOUR_DEMO_WALLET_PRIVATE_KEY"
-npm run deploy:sepolia
-Remove-Item Env:\SEPOLIA_RPC_URL
-Remove-Item Env:\BLOCKCHAIN_PRIVATE_KEY
+cd C:\Users\Sanjay\Landchain-MVP\blockchain
+.\scripts\deploy-sepolia.ps1
 ```
 
-Run this from `blockchain/`. The script prints the deployed contract address and writes the full deployment record under the ignored `blockchain/deployments/sepolia.json` file. Do not deploy with the standard Hardhat test account or a personal wallet.
+The script reads the RPC endpoint from the ignored local `backend/.env` and the private key from the ignored wallet file, then clears both from its process environment. It prints the deployed contract address and writes the full deployment record under the ignored `blockchain/deployments/sepolia.json` file. Do not deploy with the standard Hardhat test account or a personal wallet.
 
 ### 4. Create the cloud database
 
