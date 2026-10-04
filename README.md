@@ -172,6 +172,8 @@ This is a public demonstration on Ethereum's Sepolia test network. It does not r
 
 The API is public and has no user authentication. It limits write requests to 20 per minute per client, but that is only an abuse guard. Use a freshly generated Sepolia-only wallet, fund it with only a small amount of test ETH, and never put real funds or real property documents in this demo.
 
+The property registration form calculates a SHA-256 hash for a selected document in the browser. The document itself is not uploaded; only the resulting hash is sent to PostgreSQL and the blockchain. Use fictional demo documents because the hash is public and can identify matching copies of a file.
+
 ### 1. Create a dedicated test wallet
 
 From PowerShell:
