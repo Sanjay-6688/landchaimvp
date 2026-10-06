@@ -122,6 +122,12 @@ npm run dev
 
 Open <http://localhost:3000>. To use a different API URL, set `NEXT_PUBLIC_API_URL` in the frontend environment before starting Next.js.
 
+### Token transfers with MetaMask
+
+On **Token Transfer**, connect MetaMask on the same network as the backend (Sepolia for the public demo). Select a tokenized property, enter a recipient address and whole-token amount, and submit. MetaMask shows the transaction for the connected wallet to approve; the browser waits for confirmation and then displays updated balances and a Sepolia Etherscan link. Only the wallet owner can approve the transfer, and the wallet needs Sepolia ETH for gas. The app does not receive or store the wallet's private key. The selected wallet must already hold the property's tokens; tokenization initially mints the supply to the deploying backend signer.
+
+The portfolio balance lookup can still check any public wallet address. Adding a user record in LandChain does not connect that user's wallet or authorize transactions.
+
 ## Tests and build
 
 ```powershell
@@ -233,7 +239,7 @@ The blueprint uses free Render web services, which sleep after 15 minutes withou
 
 - **Blockchain unavailable:** keep `npx hardhat node` running and check `BLOCKCHAIN_RPC_URL`.
 - **Contract not configured:** deploy to `localhost` and update `LANDCHAIN_CONTRACT_ADDRESS` in `backend/.env`.
-- **Signer does not own property:** set the backend signer key to the current owner's local Hardhat account. For token transfers, it must be the sender with enough shares.
+- **Signer does not own property:** property operations using the backend signer require it to match the current owner. For dashboard token transfers, connect MetaMask as the wallet that holds the shares; it must be on the same network and have enough Sepolia ETH for gas.
 - **Property exists in database but not on current chain:** the API inspection endpoint reports this explicitly; after a chain reset, run the development reset to rebuild demo state.
 - **PostgreSQL unavailable:** verify the PostgreSQL service, database name, port, user, password, and that the database exists.
 - **Token artifact missing:** compile contracts from `blockchain` before starting property tokenization.
