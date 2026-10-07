@@ -36,8 +36,17 @@ class BlockchainClient:
     def token(self, address):
         if not Web3.is_address(address): raise RuntimeError("Invalid token contract address")
         return self.w3.eth.contract(address=Web3.to_checksum_address(address), abi=TOKEN_ABI)
-    def send(self, function, *, gas=500000):
+    def send(self, function, *, gas=None):
         signer = self.signer()
+        if gas is None:
+            # Contract storage costs vary with property IDs and dynamic string data.
+            # Estimate this call against the live chain, then add headroom rather than
+            # relying on a fixed limit that can cause confirmed transactions to OOG.
+            estimate = function.estimate_gas({"from": signer.address})
+            gas = estimate + max(estimate // 4, 25_000)
+            block_limit = self.w3.eth.get_block("latest")["gasLimit"]
+            if gas > block_limit:
+                raise RuntimeError("Estimated transaction gas exceeds the current block gas limit")
         tx = function.build_transaction({"from": signer.address, "nonce": self.w3.eth.get_transaction_count(signer.address), "chainId": self.w3.eth.chain_id, "gas": gas, "gasPrice": self.w3.eth.gas_price})
         signed = signer.sign_transaction(tx)
         tx_hash = self.w3.eth.send_raw_transaction(signed.raw_transaction)
